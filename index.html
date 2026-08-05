@@ -111,13 +111,13 @@
         .reel-card .yr {
             font-family: 'Barlow Condensed', sans-serif;
             font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 2px;
+            font-size: 10px;
+            letter-spacing: 1px;
             color: #eecf7c;
             background: rgba(0,0,0,0.7);
             padding: 0 8px;
             border-radius: 12px;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             z-index: 2;
         }
         .reel-card .tt {
@@ -134,6 +134,20 @@
             border-radius: 6px;
             z-index: 2;
             max-width: 95%;
+        }
+        .reel-card .category-badge {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d4af37;
+            background: rgba(0,0,0,0.7);
+            padding: 1px 6px;
+            border-radius: 10px;
+            z-index: 2;
+            margin-bottom: 2px;
+            border: 1px solid rgba(212,175,55,0.3);
         }
         .gate-pointer {
             position: absolute;
@@ -225,6 +239,7 @@
             border-radius: 10px;
             padding: 8px 12px;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
         .movie-row .badge-year {
             font-family: 'Barlow Condensed', sans-serif;
@@ -236,7 +251,18 @@
             border-radius: 6px;
             flex: 0 0 auto;
         }
-        .movie-row .m-title { flex: 1; font-size: 14px; line-height: 1.2; }
+        .movie-row .m-title { flex: 1; font-size: 14px; line-height: 1.2; min-width: 120px; }
+        .movie-row .category-tag {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 11px;
+            color: #d4af37;
+            background: rgba(212,175,55,0.15);
+            border: 1px solid rgba(212,175,55,0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
         .movie-row .stars { display: flex; gap: 2px; flex: 0 0 auto; }
         .movie-row .stars button {
             background: none; border: none; padding: 0; cursor: pointer;
@@ -308,7 +334,15 @@
             font-family: 'Barlow Condensed', sans-serif;
             font-size: 15px;
             color: #5c4326;
+            margin-bottom: 4px;
+        }
+        .ticket .category-display {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px;
+            color: #9c1f27;
+            font-weight: 600;
             margin-bottom: 16px;
+            letter-spacing: 1px;
         }
         .ticket .poster-preview {
             width: 180px;
@@ -363,7 +397,7 @@
 <body>
 
 <div class="marquee">
-    <h1>★ Roleta dos Oscars ★</h1>
+    <h1>🏆 Roleta dos Oscars 🏆</h1>
     <p id="counterText">carregando...</p>
 </div>
 
@@ -384,8 +418,8 @@
 <div class="empty-msg" id="emptyMsg" style="display:none;">Todos os vencedores já foram sorteados e assistidos! 🍿🏆</div>
 
 <div class="tabs">
-    <button class="tab-btn active" id="tabPending">Lista</button>
-    <button class="tab-btn" id="tabWatched">Assistidos</button>
+    <button class="tab-btn active" id="tabPending">🎯 Lista</button>
+    <button class="tab-btn" id="tabWatched">✅ Assistidos</button>
 </div>
 
 <div class="list-wrap" id="listPending"></div>
@@ -397,10 +431,11 @@
 
 <div class="overlay" id="overlay">
     <div class="ticket">
-        <div class="eyebrow">Bilhete sorteado</div>
+        <div class="eyebrow">🎬 Bilhete sorteado</div>
         <div class="poster-preview" id="ticketPoster"></div>
         <h2 id="ticketTitle">—</h2>
         <div class="yr2" id="ticketYear">—</div>
+        <div class="category-display" id="ticketCategory">🏆 Melhor Filme</div>
         <div class="rate-stars" id="ticketStars"></div>
         <div class="ticket-actions">
             <button class="btn-cancel" id="btnCancel">Cancelar</button>
@@ -582,7 +617,7 @@
             %3C/defs%3E
             %3Crect width='300' height='450' fill='url(%23g)'/%3E
             %3Crect x='10' y='10' width='280' height='430' fill='none' stroke='${accent}' stroke-width='2' opacity='0.3' rx='8'/%3E
-            %3Ctext x='50%25' y='40%25' font-family='Barlow Condensed, sans-serif' font-weight='700' font-size='60' fill='${accent}' text-anchor='middle' dominant-baseline='middle' opacity='0.8'%3E🎬%3C/text%3E
+            %3Ctext x='50%25' y='40%25' font-family='Barlow Condensed, sans-serif' font-weight='700' font-size='60' fill='${accent}' text-anchor='middle' dominant-baseline='middle' opacity='0.8'%3E🏆%3C/text%3E
             %3Ctext x='50%25' y='55%25' font-family='Playfair Display, serif' font-weight='700' font-size='18' fill='%23f6ead0' text-anchor='middle' dominant-baseline='middle'%3E${shortTitle}%3C/text%3E
             %3Ctext x='50%25' y='70%25' font-family='Barlow Condensed, sans-serif' font-weight='600' font-size='14' fill='rgba(255,255,255,0.4)' text-anchor='middle' dominant-baseline='middle'%3E${year}%3C/text%3E
             %3Crect x='0' y='0' width='300' height='6' fill='${accent}' opacity='0.5'/%3E
@@ -592,7 +627,6 @@
 
     // Função para carregar capa em um elemento (mostra a capa inteira)
     function loadPosterIntoElement(element, year, title) {
-        // Busca a capa real
         fetchPosterUrl(year, title).then(posterUrl => {
             if (posterUrl) {
                 element.style.backgroundImage = `url('${posterUrl}')`;
@@ -601,7 +635,6 @@
                 element.style.backgroundPosition = 'center';
                 element.style.backgroundColor = '#1a1a2e';
             } else {
-                // Fallback
                 const fallback = generateFallbackPoster(year, title);
                 element.style.backgroundImage = `url('${fallback}')`;
                 element.style.backgroundSize = 'contain';
@@ -619,41 +652,99 @@
         });
     }
 
-    // Dados dos filmes
+    // ============================================================
+    // LISTA DE FILMES COM CATEGORIAS
+    // ============================================================
     const MOVIES = [
-        ["2025", "Anora"], ["2024", "Oppenheimer"], ["2023", "Tudo em Todo Lugar ao Mesmo Tempo"],
-        ["2022", "No Ritmo do Coração"], ["2021", "Nomadland"], ["2020", "Parasita"],
-        ["2019", "Green Book: O Guia"], ["2018", "A Forma da Água"], ["2017", "Moonlight: Sob a Luz do Luar"],
-        ["2016", "Spotlight: Segredos Revelados"], ["2015", "Birdman"], ["2014", "12 Anos de Escravidão"],
-        ["2013", "Argo"], ["2012", "O Artista"], ["2011", "O Discurso do Rei"], ["2010", "Guerra ao Terror"],
-        ["2009", "Quem Quer Ser um Milionário?"], ["2008", "Onde os Fracos Não Têm Vez"], ["2007", "Os Infiltrados"],
-        ["2006", "Crash: No Limite"], ["2005", "Menina de Ouro"], ["2004", "O Senhor dos Anéis: O Retorno do Rei"],
-        ["2003", "Chicago"], ["2002", "Uma Mente Brilhante"], ["2001", "Gladiador"], ["2000", "Beleza Americana"],
-        ["1999", "Shakespeare Apaixonado"], ["1998", "Titanic"], ["1997", "O Paciente Inglês"], ["1996", "Coração Valente"],
-        ["1995", "Forrest Gump: O Contador de Histórias"], ["1994", "A Lista de Schindler"], ["1993", "Os Imperdoáveis"],
-        ["1992", "O Silêncio dos Inocentes"], ["1991", "Dança com Lobos"], ["1990", "Conduzindo Miss Daisy"],
-        ["1989", "Rain Man"], ["1988", "O Último Imperador"], ["1987", "Platoon"], ["1986", "Entre Dois Amores"],
-        ["1985", "Amadeus"], ["1984", "Laços de Ternura"], ["1983", "Gandhi"], ["1982", "Carruagens de Fogo"],
-        ["1981", "Gente como a Gente"], ["1980", "Kramer vs. Kramer"], ["1979", "O Franco-Atirador"],
-        ["1978", "Noivo Neurótico, Noiva Nervosa"], ["1977", "Rocky: Um Lutador"], ["1976", "Um Estranho no Ninho"],
-        ["1975", "O Poderoso Chefão II"], ["1974", "Golpe de Mestre"], ["1973", "O Poderoso Chefão"],
-        ["1972", "Operação França"], ["1971", "Patton: Rebelde ou Herói?"], ["1970", "Perdidos na Noite"],
-        ["1969", "Oliver!"], ["1968", "No Calor da Noite"], ["1967", "O Homem que Não Vendeu Sua Alma"],
-        ["1966", "A Noviça Rebelde"], ["1965", "My Fair Lady"], ["1964", "Tom Jones"], ["1963", "Lawrence da Arábia"],
-        ["1962", "Amor, Sublime Amor"], ["1961", "Se Meu Apartamento Falasse"], ["1960", "Ben-Hur"], ["1959", "Gigi"],
-        ["1958", "A Ponte do Rio Kwai"], ["1957", "A Volta ao Mundo em 80 Dias"], ["1956", "Marty"],
-        ["1955", "Sindicato de Ladrões"], ["1954", "A Um Passo da Eternidade"], ["1953", "O Maior Espetáculo da Terra"],
-        ["1952", "Sinfonia de Paris"], ["1951", "A Malvada"], ["1950", "Todos os Homens do Rei"], ["1949", "Hamlet"],
-        ["1948", "A Luz é para Todos"], ["1947", "Os Melhores Anos de Nossas Vidas"], ["1946", "Farrapo Humano"],
-        ["1945", "O Bom Pastor"], ["1944", "Casablanca"], ["1943", "A Rosa da Esperança"],
-        ["1942", "Como Era Verde o Meu Vale"], ["1941", "Rebecca, a Mulher Inesquecível"], ["1940", "...E o Vento Levou"],
-        ["1939", "Do Mundo Nada se Leva"], ["1938", "A Vida de Émile Zola"], ["1937", "O Grande Ziegfeld"],
-        ["1936", "O Grande Motim"], ["1935", "Aconteceu Naquela Noite"], ["1934", "Cavalgada"], ["1933", "Grande Hotel"],
-        ["1932", "Cimarron"], ["1931", "Sem Novidades no Front"], ["1930", "Melodia da Broadway"], ["1929", "Asas"],
-    ].map(([year, title]) => ({ id: year, year, title }));
+        // Melhor Filme
+        { year: "2025", title: "Anora", category: "🏆 Melhor Filme" },
+        { year: "2024", title: "Oppenheimer", category: "🏆 Melhor Filme" },
+        { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "🏆 Melhor Filme" },
+        { year: "2022", title: "No Ritmo do Coração", category: "🏆 Melhor Filme" },
+        { year: "2021", title: "Nomadland", category: "🏆 Melhor Filme" },
+        { year: "2020", title: "Parasita", category: "🏆 Melhor Filme" },
+        { year: "2019", title: "Green Book: O Guia", category: "🏆 Melhor Filme" },
+        { year: "2018", title: "A Forma da Água", category: "🏆 Melhor Filme" },
+        { year: "2017", title: "Moonlight: Sob a Luz do Luar", category: "🏆 Melhor Filme" },
+        { year: "2016", title: "Spotlight: Segredos Revelados", category: "🏆 Melhor Filme" },
+        { year: "2015", title: "Birdman", category: "🏆 Melhor Filme" },
+        { year: "2014", title: "12 Anos de Escravidão", category: "🏆 Melhor Filme" },
+        
+        // Melhor Diretor
+        { year: "2024", title: "Oppenheimer", category: "🎬 Melhor Diretor" },
+        { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "🎬 Melhor Diretor" },
+        { year: "2020", title: "Parasita", category: "🎬 Melhor Diretor" },
+        { year: "2019", title: "1917", category: "🎬 Melhor Diretor" },
+        { year: "2018", title: "A Forma da Água", category: "🎬 Melhor Diretor" },
+        
+        // Melhor Ator
+        { year: "2024", title: "Oppenheimer", category: "🎭 Melhor Ator" },
+        { year: "2023", title: "Os Fabelmans", category: "🎭 Melhor Ator" },
+        { year: "2022", title: "King Richard", category: "🎭 Melhor Ator" },
+        { year: "2020", title: "Joker", category: "🎭 Melhor Ator" },
+        { year: "2019", title: "Bohemian Rhapsody", category: "🎭 Melhor Ator" },
+        
+        // Melhor Atriz
+        { year: "2024", title: "Poor Things", category: "👸 Melhor Atriz" },
+        { year: "2023", title: "Tár", category: "👸 Melhor Atriz" },
+        { year: "2022", title: "Ataque dos Cães", category: "👸 Melhor Atriz" },
+        { year: "2021", title: "Nomadland", category: "👸 Melhor Atriz" },
+        { year: "2020", title: "Judy", category: "👸 Melhor Atriz" },
+        
+        // Melhor Filme Internacional
+        { year: "2024", title: "Zona de Interesse", category: "🌍 Melhor Filme Internacional" },
+        { year: "2023", title: "Nada de Novo no Front", category: "🌍 Melhor Filme Internacional" },
+        { year: "2022", title: "Drive My Car", category: "🌍 Melhor Filme Internacional" },
+        { year: "2021", title: "Druk (Another Round)", category: "🌍 Melhor Filme Internacional" },
+        { year: "2020", title: "Parasita", category: "🌍 Melhor Filme Internacional" },
+        
+        // Melhor Animação
+        { year: "2024", title: "O Menino e a Garça", category: "🎨 Melhor Animação" },
+        { year: "2023", title: "Pinóquio de Guillermo del Toro", category: "🎨 Melhor Animação" },
+        { year: "2022", title: "Encanto", category: "🎨 Melhor Animação" },
+        { year: "2021", title: "Soul", category: "🎨 Melhor Animação" },
+        { year: "2020", title: "Toy Story 4", category: "🎨 Melhor Animação" },
+        
+        // Melhor Roteiro Original
+        { year: "2024", title: "Anatomy of a Fall", category: "✍️ Melhor Roteiro Original" },
+        { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "✍️ Melhor Roteiro Original" },
+        { year: "2022", title: "Belfast", category: "✍️ Melhor Roteiro Original" },
+        { year: "2021", title: "Promising Young Woman", category: "✍️ Melhor Roteiro Original" },
+        
+        // Melhor Roteiro Adaptado
+        { year: "2024", title: "American Fiction", category: "📖 Melhor Roteiro Adaptado" },
+        { year: "2023", title: "Women Talking", category: "📖 Melhor Roteiro Adaptado" },
+        { year: "2022", title: "Ataque dos Cães", category: "📖 Melhor Roteiro Adaptado" },
+        { year: "2021", title: "Nomadland", category: "📖 Melhor Roteiro Adaptado" },
+        
+        // Melhor Fotografia
+        { year: "2024", title: "Oppenheimer", category: "📷 Melhor Fotografia" },
+        { year: "2023", title: "All Quiet on the Western Front", category: "📷 Melhor Fotografia" },
+        { year: "2022", title: "Duna", category: "📷 Melhor Fotografia" },
+        
+        // Melhor Trilha Sonora
+        { year: "2024", title: "Oppenheimer", category: "🎵 Melhor Trilha Sonora" },
+        { year: "2023", title: "All Quiet on the Western Front", category: "🎵 Melhor Trilha Sonora" },
+        { year: "2022", title: "Duna", category: "🎵 Melhor Trilha Sonora" },
+        
+        // Melhor Canção Original
+        { year: "2024", title: "Barbie", category: "🎤 Melhor Canção Original" },
+        { year: "2023", title: "RRR", category: "🎤 Melhor Canção Original" },
+        { year: "2022", title: "No Time to Die", category: "🎤 Melhor Canção Original" },
+        
+        // Clássicos
+        { year: "1998", title: "Titanic", category: "🏆 Melhor Filme" },
+        { year: "1994", title: "A Lista de Schindler", category: "🏆 Melhor Filme" },
+        { year: "1973", title: "O Poderoso Chefão", category: "🏆 Melhor Filme" },
+        { year: "1944", title: "Casablanca", category: "🏆 Melhor Filme" },
+        { year: "1940", title: "...E o Vento Levou", category: "🏆 Melhor Filme" },
+        { year: "1960", title: "Ben-Hur", category: "🏆 Melhor Filme" },
+        { year: "1985", title: "Amadeus", category: "🏆 Melhor Filme" },
+        { year: "1995", title: "Forrest Gump: O Contador de Histórias", category: "🏆 Melhor Filme" },
+    ];
 
     // Storage
-    const STORAGE_KEY = 'oscar-roulette-state-v3';
+    const STORAGE_KEY = 'oscar-roulette-state-v4';
     let state = null;
     let spinning = false;
     let pendingRating = 0;
@@ -671,6 +762,7 @@
         overlay: document.getElementById('overlay'),
         ticketTitle: document.getElementById('ticketTitle'),
         ticketYear: document.getElementById('ticketYear'),
+        ticketCategory: document.getElementById('ticketCategory'),
         ticketPoster: document.getElementById('ticketPoster'),
         ticketStars: document.getElementById('ticketStars'),
         btnConfirm: document.getElementById('btnConfirm'),
@@ -706,16 +798,15 @@
         const d = document.createElement('div');
         d.className = 'reel-card';
         
-        // Fundo com blur da capa
         const bgDiv = document.createElement('div');
         bgDiv.className = 'cover-bg';
         d.appendChild(bgDiv);
         
-        // Carrega a capa
         loadPosterIntoElement(d, movie.year, movie.title);
         
         d.innerHTML += `
             <div class="cover-overlay"></div>
+            <div class="category-badge">${movie.category}</div>
             <div class="yr">${movie.year}</div>
             <div class="tt">${movie.title}</div>
         `;
@@ -726,7 +817,7 @@
         els.reelTrack.style.transition = 'none';
         els.reelTrack.style.transform = 'translateX(0)';
         els.reelTrack.innerHTML = '';
-        const showList = state.pending.length ? state.pending : [{ year: '', title: 'Sem filmes', id: 'empty' }];
+        const showList = state.pending.length ? state.pending : [{ year: '', title: 'Sem filmes', category: '', id: 'empty' }];
         const display = shuffle(showList).slice(0, 12);
         const cycle = display.concat(display).concat(display);
         cycle.forEach(m => els.reelTrack.appendChild(makeCard(m)));
@@ -740,12 +831,16 @@
         updateCounter();
         els.listPending.innerHTML = '';
         if (state.pending.length === 0) {
-            els.listPending.innerHTML = '<div class="empty-list">Nenhum filme pra assistir. Você viu tudo! 🎉</div>';
+            els.listPending.innerHTML = '<div class="empty-list">🎉 Nenhum filme pra assistir. Você viu tudo!</div>';
         } else {
             state.pending.slice().sort((a, b) => b.year - a.year).forEach(m => {
                 const row = document.createElement('div');
                 row.className = 'movie-row';
-                row.innerHTML = `<span class="badge-year">${m.year}</span><span class="m-title">${m.title}</span>`;
+                row.innerHTML = `
+                    <span class="badge-year">${m.year}</span>
+                    <span class="m-title">${m.title}</span>
+                    <span class="category-tag">${m.category}</span>
+                `;
                 els.listPending.appendChild(row);
             });
         }
@@ -762,6 +857,7 @@
                 row.innerHTML = `
                     <span class="badge-year">${m.year}</span>
                     <span class="m-title">${m.title}</span>
+                    <span class="category-tag">${m.category}</span>
                     <span class="stars">${starsHtml}</span>
                     <button class="undo-btn" data-id="${m.id}">voltar</button>
                 `;
@@ -878,7 +974,8 @@
         pendingTarget = movie;
         pendingRating = 0;
         els.ticketTitle.textContent = movie.title;
-        els.ticketYear.textContent = `Vencedor de ${movie.year}`;
+        els.ticketYear.textContent = `🏆 Ano: ${movie.year}`;
+        els.ticketCategory.textContent = movie.category;
         
         loadPosterIntoElement(els.ticketPoster, movie.year, movie.title);
 

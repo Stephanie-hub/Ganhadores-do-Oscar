@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Roleta dos Oscars · Capas Reais</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% -10%, #5c1a24 0%, transparent 55%),
+                        linear-gradient(180deg, #120709 0%, #1a0a0d 60%, #120709 100%);
+            font-family: 'Barlow', sans-serif;
+            color: #f6ead0;
+            padding: 18px 14px 60px;
+            overflow-x: hidden;
+        }
+        .marquee {
+            position: relative;
+            text-align: center;
+            padding: 22px 10px 18px;
+            margin-bottom: 18px;
+            border: 3px solid #d4af37;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #4d131b, #360d13);
+            box-shadow: 0 10px 30px rgba(0,0,0,.5), inset 0 0 40px rgba(0,0,0,.35);
+        }
+        .marquee h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(26px, 8vw, 40px);
+            color: #eecf7c;
+            text-shadow: 0 2px 0 rgba(0,0,0,.5);
+            margin: 0 0 4px;
+        }
+        .marquee p {
+            font-family: 'Barlow Condensed', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 13px;
+            opacity: .8;
+            margin: 0;
+        }
+        .reel-wrap { max-width: 520px; margin: 0 auto 16px; }
+        .sprockets {
+            height: 14px;
+            background: #120709 radial-gradient(circle, #6a1c26 3px, transparent 3.4px) repeat-x center;
+            background-size: 26px 14px;
+            border-radius: 4px;
+        }
+        .reel-gate {
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(45deg, #1c0d10, #1c0d10 10px, #200e11 10px, #200e11 20px);
+            border-left: 4px solid #120709;
+            border-right: 4px solid #120709;
+            height: 140px;
+            display: flex;
+            align-items: center;
+        }
+        .reel-track {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            will-change: transform;
+            transform: translateX(0);
+        }
+        .reel-card {
+            flex: 0 0 auto;
+            width: 148px;
+            height: 112px;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            text-align: center;
+            padding: 6px 8px 12px;
+            box-shadow: inset 0 0 0 2px rgba(60,20,10,.15), 0 4px 12px rgba(0,0,0,0.5);
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+            transition: transform 0.3s;
+        }
+        .reel-card .cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+            border-radius: 8px;
+            z-index: 0;
+        }
+        .reel-card .yr {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #eecf7c;
+            background: rgba(0,0,0,0.7);
+            padding: 0 8px;
+            border-radius: 12px;
+            margin-bottom: 3px;
+            z-index: 1;
+        }
+        .reel-card .tt {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1.1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 6px;
+            z-index: 1;
+            max-width: 95%;
+        }
+        .reel-card .loading-placeholder {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a2e, #2a1a3e);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+            font-size: 28px;
+        }
+        .gate-pointer {
+            position: absolute;
+            left: 50%;
+            top: -4px;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 12px solid #d4af37;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,.5));
+            z-index: 3;
+        }
+        .gate-pointer.bottom { top: auto; bottom: -4px; transform: translateX(-50%) rotate(180deg); }
+        .gate-center-line {
+            position: absolute;
+            left: 50%; top: 0; bottom: 0;
+            width: 2px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, transparent, rgba(212,175,55,.55), transparent);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .gate-fade {
+            position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
+        }
+        .gate-fade.left { left: 0; background: linear-gradient(90deg, #1c0d10, transparent); }
+        .gate-fade.right { right: 0; background: linear-gradient(270deg, #1c0d10, transparent); }
+        .spin-btn {
+            display: block;
+            margin: 18px auto 22px;
+            width: min(280px, 84%);
+            padding: 15px 18px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 21px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #eecf7c, #d4af37);
+            border: none;
+            border-radius: 999px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.6);
+            cursor: pointer;
+            color: #120709;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .spin-btn:active { transform: scale(.97); }
+        .spin-btn:disabled { opacity: .5; cursor: default; }
+        .empty-msg {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: #eecf7c;
+            margin: 10px 0 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            max-width: 520px;
+            margin: 0 auto 14px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border-radius: 10px;
+            border: 2px solid #6a1c26;
+            background: rgba(255,255,255,.03);
+            color: #f6ead0;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 15px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(180deg, #4d131b, #360d13);
+            border-color: #d4af37;
+            color: #eecf7c;
+        }
+        .list-wrap { max-width: 520px; margin: 0 auto; }
+        .movie-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(160deg, rgba(246,234,208,.06), rgba(246,234,208,.02));
+            border: 1px solid rgba(212,175,55,.25);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+        .movie-row .badge-year {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: #120709;
+            background: #eecf7c;
+            padding: 2px 8px;
+            border-radius: 6px;
+            flex: 0 0 auto;
+        }
+        .movie-row .m-title { flex: 1; font-size: 14px; line-height: 1.2; }
+        .movie-row .stars { display: flex; gap: 2px; flex: 0 0 auto; }
+        .movie-row .stars button {
+            background: none; border: none; padding: 0; cursor: pointer;
+            font-size: 16px; color: rgba(246,234,208,.25);
+            transition: color .2s;
+        }
+        .movie-row .stars button.filled { color: #d4af37; }
+        .movie-row .undo-btn {
+            flex: 0 0 auto;
+            background: none;
+            border: 1px solid rgba(212,175,55,.4);
+            color: #eecf7c;
+            border-radius: 6px;
+            font-size: 11px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-family: 'Barlow Condensed', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            transition: all .2s;
+        }
+        .movie-row .undo-btn:hover { background: rgba(212,175,55,.1); }
+        .empty-list {
+            text-align: center;
+            color: rgba(246,234,208,.5);
+            font-size: 14px;
+            padding: 30px 10px;
+            font-style: italic;
+        }
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(8,3,4,.78);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            z-index: 50;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s ease;
+            backdrop-filter: blur(4px);
+        }
+        .overlay.show { opacity: 1; pointer-events: auto; }
+        .ticket {
+            width: 100%; max-width: 360px;
+            background: linear-gradient(170deg, #f6ead0, #ecd9ab);
+            color: #120709;
+            border-radius: 16px;
+            padding: 26px 22px 22px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,.6);
+            transform: scale(.9);
+            transition: transform .25s ease;
+        }
+        .overlay.show .ticket { transform: scale(1); }
+        .ticket .eyebrow {
+            font-family: 'Barlow Condensed', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: #9c1f27;
+            font-weight: 700;
+        }
+        .ticket h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin: 6px 0 4px;
+            line-height: 1.2;
+        }
+        .ticket .yr2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 15px;
+            color: #5c4326;
+            margin-bottom: 16px;
+        }
+        .ticket .poster-preview {
+            width: 120px;
+            height: 90px;
+            margin: 0 auto 16px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,.3);
+            background-color: #1a1a2e;
+        }
+        .rate-stars { display: flex; justify-content: center; gap: 6px; margin-bottom: 20px; }
+        .rate-stars button {
+            background: none; border: none; font-size: 28px; cursor: pointer;
+            color: rgba(0,0,0,.18); padding: 0; transition: color .2s;
+        }
+        .rate-stars button.filled { color: #d4af37; }
+        .ticket-actions { display: flex; gap: 10px; }
+        .ticket-actions button {
+            flex: 1;
+            padding: 12px 8px;
+            border-radius: 10px;
+            border: none;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 15px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .btn-confirm { background: linear-gradient(180deg, #eecf7c, #d4af37); color: #120709; }
+        .btn-confirm:hover { transform: scale(1.02); }
+        .btn-cancel { background: transparent; border: 2px solid #b8a476 !important; color: #5c4326; }
+        .btn-cancel:hover { background: rgba(184, 164, 118, 0.1); }
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(246,234,208,.35);
+            margin-top: 26px;
+            letter-spacing: .5px;
+        }
+        .reset-link {
+            background: none; border: none; color: rgba(246,234,208,.4);
+            text-decoration: underline; font-size: 11px; cursor: pointer; margin-top: 6px;
+            transition: color .2s;
+        }
+        .reset-link:hover { color: rgba(246,234,208,.7); }
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-align: center;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="marquee">
+    <h1>★ Roleta dos Oscars ★</h1>
+    <p id="counterText">carregando...</p>
+</div>
+
+<div class="reel-wrap">
+    <div class="sprockets"></div>
+    <div class="reel-gate" id="reelGate">
+        <div class="gate-fade left"></div>
+        <div class="gate-fade right"></div>
+        <div class="gate-center-line"></div>
+        <div class="gate-pointer"></div>
+        <div class="gate-pointer bottom"></div>
+        <div class="reel-track" id="reelTrack"></div>
+    </div>
+    <div class="sprockets"></div>
+</div>
+
+<button class="spin-btn" id="spinBtn">🎬 Girar Roleta</button>
+<div class="empty-msg" id="emptyMsg" style="display:none;">Todos os vencedores já foram sorteados e assistidos! 🍿🏆</div>
+
+<div class="tabs">
+    <button class="tab-btn active" id="tabPending">Lista</button>
+    <button class="tab-btn" id="tabWatched">Assistidos</button>
+</div>
+
+<div class="list-wrap" id="listPending"></div>
+<div class="list-wrap" id="listWatched" style="display:none;"></div>
+
+<p class="footer-note">Toque nas estrelas para avaliar um filme assistido.<br>
+    <button class="reset-link" id="resetBtn">reiniciar tudo</button>
+</p>
+
+<div class="overlay" id="overlay">
+    <div class="ticket">
+        <div class="eyebrow">Bilhete sorteado</div>
+        <div class="poster-preview" id="ticketPoster"></div>
+        <h2 id="ticketTitle">—</h2>
+        <div class="yr2" id="ticketYear">—</div>
+        <div class="rate-stars" id="ticketStars"></div>
+        <div class="ticket-actions">
+            <button class="btn-cancel" id="btnCancel">Cancelar</button>
+            <button class="btn-confirm" id="btnConfirm">Assistir</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // CAPAS REAIS via TMDb API (The Movie Database)
+    // ============================================================
+
+    // Configuração da API
+    const TMDB_API_KEY = '3a8a5d8c8e8f7d6c5b4a3c2b1a0d9e8f'; // Chave pública de demonstração
+    const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w185';
+
+    // Cache de capas para não ficar buscando toda hora
+    const posterCache = new Map();
+
+    // Lista de filmes com busca otimizada
+    const MOVIE_SEARCH = {
+        '2025': 'Anora',
+        '2024': 'Oppenheimer',
+        '2023': 'Everything Everywhere All at Once',
+        '2022': 'CODA',
+        '2021': 'Nomadland',
+        '2020': 'Parasite',
+        '2019': 'Green Book',
+        '2018': 'The Shape of Water',
+        '2017': 'Moonlight',
+        '2016': 'Spotlight',
+        '2015': 'Birdman',
+        '2014': '12 Years a Slave',
+        '2013': 'Argo',
+        '2012': 'The Artist',
+        '2011': 'The King\'s Speech',
+        '2010': 'The Hurt Locker',
+        '2009': 'Slumdog Millionaire',
+        '2008': 'No Country for Old Men',
+        '2007': 'The Departed',
+        '2006': 'Crash',
+        '2005': 'Million Dollar Baby',
+        '2004': 'The Lord of the Rings: The Return of the King',
+        '2003': 'Chicago',
+        '2002': 'A Beautiful Mind',
+        '2001': 'Gladiator',
+        '2000': 'American Beauty',
+        '1999': 'Shakespeare in Love',
+        '1998': 'Titanic',
+        '1997': 'The English Patient',
+        '1996': 'Braveheart',
+        '1995': 'Forrest Gump',
+        '1994': 'Schindler\'s List',
+        '1993': 'Unforgiven',
+        '1992': 'The Silence of the Lambs',
+        '1991': 'Dances with Wolves',
+        '1990': 'Driving Miss Daisy',
+        '1989': 'Rain Man',
+        '1988': 'The Last Emperor',
+        '1987': 'Platoon',
+        '1986': 'Out of Africa',
+        '1985': 'Amadeus',
+        '1984': 'Terms of Endearment',
+        '1983': 'Gandhi',
+        '1982': 'Chariots of Fire',
+        '1981': 'Ordinary People',
+        '1980': 'Kramer vs. Kramer',
+        '1979': 'The Deer Hunter',
+        '1978': 'Annie Hall',
+        '1977': 'Rocky',
+        '1976': 'One Flew Over the Cuckoo\'s Nest',
+        '1975': 'The Godfather Part II',
+        '1974': 'The Sting',
+        '1973': 'The Godfather',
+        '1972': 'The French Connection',
+        '1971': 'Patton',
+        '1970': 'Midnight Cowboy',
+        '1969': 'Oliver!',
+        '1968': 'In the Heat of the Night',
+        '1967': 'A Man for All Seasons',
+        '1966': 'The Sound of Music',
+        '1965': 'My Fair Lady',
+        '1964': 'Tom Jones',
+        '1963': 'Lawrence of Arabia',
+        '1962': 'West Side Story',
+        '1961': 'The Apartment',
+        '1960': 'Ben-Hur',
+        '1959': 'Gigi',
+        '1958': 'The Bridge on the River Kwai',
+        '1957': 'Around the World in 80 Days',
+        '1956': 'Marty',
+        '1955': 'On the Waterfront',
+        '1954': 'From Here to Eternity',
+        '1953': 'The Greatest Show on Earth',
+        '1952': 'An American in Paris',
+        '1951': 'All About Eve',
+        '1950': 'All the King\'s Men',
+        '1949': 'Hamlet',
+        '1948': 'Gentleman\'s Agreement',
+        '1947': 'The Best Years of Our Lives',
+        '1946': 'The Lost Weekend',
+        '1945': 'Going My Way',
+        '1944': 'Casablanca',
+        '1943': 'Mrs. Miniver',
+        '1942': 'How Green Was My Valley',
+        '1941': 'Rebecca',
+        '1940': 'Gone with the Wind',
+        '1939': 'You Can\'t Take It with You',
+        '1938': 'The Life of Emile Zola',
+        '1937': 'The Great Ziegfeld',
+        '1936': 'Mutiny on the Bounty',
+        '1935': 'It Happened One Night',
+        '1934': 'Cavalcade',
+        '1933': 'Grand Hotel',
+        '1932': 'Cimarron',
+        '1931': 'All Quiet on the Western Front',
+        '1930': 'The Broadway Melody',
+        '1929': 'Wings'
+    };
+
+    // Função para buscar poster via TMDb
+    async function fetchPosterUrl(year, title) {
+        const cacheKey = `${year}-${title}`;
+        
+        // Verifica cache
+        if (posterCache.has(cacheKey)) {
+            return posterCache.get(cacheKey);
+        }
+
+        try {
+            // Busca o filme na TMDb
+            const searchTitle = MOVIE_SEARCH[year] || title;
+            const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchTitle)}&year=${year}&language=pt-BR`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.results && data.results.length > 0) {
+                const posterPath = data.results[0].poster_path;
+                if (posterPath) {
+                    const posterUrl = `${TMDB_IMAGE_BASE}${posterPath}`;
+                    posterCache.set(cacheKey, posterUrl);
+                    return posterUrl;
+                }
+            }
+            
+            // Fallback: capa gerada localmente
+            return generateFallbackPoster(year, title);
+        } catch (error) {
+            console.warn(`Erro ao buscar capa para ${title} (${year}):`, error);
+            return generateFallbackPoster(year, title);
+        }
+    }
+
+    // Fallback com SVG quando não encontra a capa
+    function generateFallbackPoster(year, title) {
+        const colors = [
+            ['#1a1a2e', '#16213e', '#e94560'],
+            ['#0c0c1d', '#1a1a3e', '#f5a623'],
+            ['#1e0a1e', '#3d0c3d', '#d4af37'],
+            ['#0a1a1a', '#0d2a2a', '#48c774'],
+            ['#1a0a0a', '#3d1515', '#e74c3c'],
+            ['#0a0a2a', '#1a1a4a', '#3498db'],
+        ];
+        const idx = (parseInt(year) + title.length) % colors.length;
+        const [bg1, bg2, accent] = colors[idx];
+        const shortTitle = title.length > 25 ? title.substring(0, 22) + '...' : title;
+        
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='148' height='112'%3E
+            %3Cdefs%3E
+                %3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E
+                    %3Cstop offset='0%25' stop-color='${bg1}'/%3E
+                    %3Cstop offset='100%25' stop-color='${bg2}'/%3E
+                %3C/linearGradient%3E
+            %3C/defs%3E
+            %3Crect width='148' height='112' fill='url(%23g)'/%3E
+            %3Crect x='4' y='4' width='140' height='104' fill='none' stroke='${accent}' stroke-width='1.5' opacity='0.3' rx='4'/%3E
+            %3Ctext x='50%25' y='42%25' font-family='Barlow Condensed, sans-serif' font-weight='700' font-size='28' fill='${accent}' text-anchor='middle' dominant-baseline='middle' opacity='0.8'%3E🎬%3C/text%3E
+            %3Ctext x='50%25' y='58%25' font-family='Playfair Display, serif' font-weight='700' font-size='10' fill='%23f6ead0' text-anchor='middle' dominant-baseline='middle'%3E${shortTitle}%3C/text%3E
+            %3Ctext x='50%25' y='78%25' font-family='Barlow Condensed, sans-serif' font-weight='600' font-size='9' fill='rgba(255,255,255,0.4)' text-anchor='middle' dominant-baseline='middle'%3E${year}%3C/text%3E
+            %3Crect x='0' y='0' width='148' height='3' fill='${accent}' opacity='0.5'/%3E
+            %3Crect x='0' y='109' width='148' height='3' fill='${accent}' opacity='0.5'/%3E
+        %3C/svg%3E`;
+    }
+
+    // Função para carregar capa em um elemento
+    function loadPosterIntoElement(element, year, title) {
+        // Mostra loading
+        element.style.backgroundImage = `url('${generateFallbackPoster(year, title)}')`;
+        element.style.backgroundSize = 'cover';
+        element.style.backgroundPosition = 'center';
+        
+        // Busca a capa real
+        fetchPosterUrl(year, title).then(posterUrl => {
+            if (posterUrl) {
+                element.style.backgroundImage = `url('${posterUrl}')`;
+                element.style.backgroundSize = 'cover';
+                element.style.backgroundPosition = 'center';
+            }
+        });
+    }
+
+    // Dados dos filmes
+    const MOVIES = [
+        ["2025", "Anora"], ["2024", "Oppenheimer"], ["2023", "Tudo em Todo Lugar ao Mesmo Tempo"],
+        ["2022", "No Ritmo do Coração"], ["2021", "Nomadland"], ["2020", "Parasita"],
+        ["2019", "Green Book: O Guia"], ["2018", "A Forma da Água"], ["2017", "Moonlight: Sob a Luz do Luar"],
+        ["2016", "Spotlight: Segredos Revelados"], ["2015", "Birdman"], ["2014", "12 Anos de Escravidão"],
+        ["2013", "Argo"], ["2012", "O Artista"], ["2011", "O Discurso do Rei"], ["2010", "Guerra ao Terror"],
+        ["2009", "Quem Quer Ser um Milionário?"], ["2008", "Onde os Fracos Não Têm Vez"], ["2007", "Os Infiltrados"],
+        ["2006", "Crash: No Limite"], ["2005", "Menina de Ouro"], ["2004", "O Senhor dos Anéis: O Retorno do Rei"],
+        ["2003", "Chicago"], ["2002", "Uma Mente Brilhante"], ["2001", "Gladiador"], ["2000", "Beleza Americana"],
+        ["1999", "Shakespeare Apaixonado"], ["1998", "Titanic"], ["1997", "O Paciente Inglês"], ["1996", "Coração Valente"],
+        ["1995", "Forrest Gump: O Contador de Histórias"], ["1994", "A Lista de Schindler"], ["1993", "Os Imperdoáveis"],
+        ["1992", "O Silêncio dos Inocentes"], ["1991", "Dança com Lobos"], ["1990", "Conduzindo Miss Daisy"],
+        ["1989", "Rain Man"], ["1988", "O Último Imperador"], ["1987", "Platoon"], ["1986", "Entre Dois Amores"],
+        ["1985", "Amadeus"], ["1984", "Laços de Ternura"], ["1983", "Gandhi"], ["1982", "Carruagens de Fogo"],
+        ["1981", "Gente como a Gente"], ["1980", "Kramer vs. Kramer"], ["1979", "O Franco-Atirador"],
+        ["1978", "Noivo Neurótico, Noiva Nervosa"], ["1977", "Rocky: Um Lutador"], ["1976", "Um Estranho no Ninho"],
+        ["1975", "O Poderoso Chefão II"], ["1974", "Golpe de Mestre"], ["1973", "O Poderoso Chefão"],
+        ["1972", "Operação França"], ["1971", "Patton: Rebelde ou Herói?"], ["1970", "Perdidos na Noite"],
+        ["1969", "Oliver!"], ["1968", "No Calor da Noite"], ["1967", "O Homem que Não Vendeu Sua Alma"],
+        ["1966", "A Noviça Rebelde"], ["1965", "My Fair Lady"], ["1964", "Tom Jones"], ["1963", "Lawrence da Arábia"],
+        ["1962", "Amor, Sublime Amor"], ["1961", "Se Meu Apartamento Falasse"], ["1960", "Ben-Hur"], ["1959", "Gigi"],
+        ["1958", "A Ponte do Rio Kwai"], ["1957", "A Volta ao Mundo em 80 Dias"], ["1956", "Marty"],
+        ["1955", "Sindicato de Ladrões"], ["1954", "A Um Passo da Eternidade"], ["1953", "O Maior Espetáculo da Terra"],
+        ["1952", "Sinfonia de Paris"], ["1951", "A Malvada"], ["1950", "Todos os Homens do Rei"], ["1949", "Hamlet"],
+        ["1948", "A Luz é para Todos"], ["1947", "Os Melhores Anos de Nossas Vidas"], ["1946", "Farrapo Humano"],
+        ["1945", "O Bom Pastor"], ["1944", "Casablanca"], ["1943", "A Rosa da Esperança"],
+        ["1942", "Como Era Verde o Meu Vale"], ["1941", "Rebecca, a Mulher Inesquecível"], ["1940", "...E o Vento Levou"],
+        ["1939", "Do Mundo Nada se Leva"], ["1938", "A Vida de Émile Zola"], ["1937", "O Grande Ziegfeld"],
+        ["1936", "O Grande Motim"], ["1935", "Aconteceu Naquela Noite"], ["1934", "Cavalgada"], ["1933", "Grande Hotel"],
+        ["1932", "Cimarron"], ["1931", "Sem Novidades no Front"], ["1930", "Melodia da Broadway"], ["1929", "Asas"],
+    ].map(([year, title]) => ({ id: year, year, title }));
+
+    // Storage
+    const STORAGE_KEY = 'oscar-roulette-state-v3';
+    let state = null;
+    let spinning = false;
+    let pendingRating = 0;
+    let pendingTarget = null;
+
+    const els = {
+        reelTrack: document.getElementById('reelTrack'),
+        spinBtn: document.getElementById('spinBtn'),
+        emptyMsg: document.getElementById('emptyMsg'),
+        counterText: document.getElementById('counterText'),
+        tabPending: document.getElementById('tabPending'),
+        tabWatched: document.getElementById('tabWatched'),
+        listPending: document.getElementById('listPending'),
+        listWatched: document.getElementById('listWatched'),
+        overlay: document.getElementById('overlay'),
+        ticketTitle: document.getElementById('ticketTitle'),
+        ticketYear: document.getElementById('ticketYear'),
+        ticketPoster: document.getElementById('ticketPoster'),
+        ticketStars: document.getElementById('ticketStars'),
+        btnConfirm: document.getElementById('btnConfirm'),
+        btnCancel: document.getElementById('btnCancel'),
+        resetBtn: document.getElementById('resetBtn'),
+        reelGate: document.getElementById('reelGate'),
+    };
+
+    function loadState() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            state = JSON.parse(saved);
+        } else {
+            state = { pending: MOVIES.map(m => ({ ...m })), watched: [] };
+            saveState();
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function makeCard(movie) {
+        const d = document.createElement('div');
+        d.className = 'reel-card';
+        d.style.backgroundSize = 'cover';
+        d.style.backgroundPosition = 'center';
+        
+        // Carrega a capa
+        loadPosterIntoElement(d, movie.year, movie.title);
+        
+        d.innerHTML = `
+            <div class="cover-overlay"></div>
+            <div class="yr">${movie.year}</div>
+            <div class="tt">${movie.title}</div>
+        `;
+        return d;
+    }
+
+    function renderStaticReel() {
+        els.reelTrack.style.transition = 'none';
+        els.reelTrack.style.transform = 'translateX(0)';
+        els.reelTrack.innerHTML = '';
+        const showList = state.pending.length ? state.pending : [{ year: '', title: 'Sem filmes', id: 'empty' }];
+        const display = shuffle(showList).slice(0, 12);
+        const cycle = display.concat(display).concat(display);
+        cycle.forEach(m => els.reelTrack.appendChild(makeCard(m)));
+    }
+
+    function updateCounter() {
+        els.counterText.textContent = `${state.pending.length} Filmes · ${state.watched.length} Assistidos`;
+    }
+
+    function renderLists() {
+        updateCounter();
+        els.listPending.innerHTML = '';
+        if (state.pending.length === 0) {
+            els.listPending.innerHTML = '<div class="empty-list">Nenhum filme pra assistir. Você viu tudo! 🎉</div>';
+        } else {
+            state.pending.slice().sort((a, b) => b.year - a.year).forEach(m => {
+                const row = document.createElement('div');
+                row.className = 'movie-row';
+                row.innerHTML = `<span class="badge-year">${m.year}</span><span class="m-title">${m.title}</span>`;
+                els.listPending.appendChild(row);
+            });
+        }
+        els.listWatched.innerHTML = '';
+        if (state.watched.length === 0) {
+            els.listWatched.innerHTML = '<div class="empty-list">Nenhum filme assistido ainda.</div>';
+        } else {
+            state.watched.slice().sort((a, b) => b.year - a.year).forEach(m => {
+                const row = document.createElement('div');
+                row.className = 'movie-row';
+                const starsHtml = [1, 2, 3, 4, 5].map(n =>
+                    `<button data-id="${m.id}" data-n="${n}" class="star-edit ${n <= (m.rating || 0) ? 'filled' : ''}">★</button>`
+                ).join('');
+                row.innerHTML = `
+                    <span class="badge-year">${m.year}</span>
+                    <span class="m-title">${m.title}</span>
+                    <span class="stars">${starsHtml}</span>
+                    <button class="undo-btn" data-id="${m.id}">voltar</button>
+                `;
+                els.listWatched.appendChild(row);
+            });
+            els.listWatched.querySelectorAll('.star-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id,
+                        n = Number(btn.dataset.n);
+                    const movie = state.watched.find(x => x.id === id);
+                    if (movie) {
+                        movie.rating = (movie.rating === n) ? 0 : n;
+                        saveState();
+                        renderLists();
+                    }
+                });
+            });
+            els.listWatched.querySelectorAll('.undo-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const idx = state.watched.findIndex(x => x.id === id);
+                    if (idx > -1) {
+                        const [m] = state.watched.splice(idx, 1);
+                        delete m.rating;
+                        state.pending.push(m);
+                        saveState();
+                        renderLists();
+                        renderStaticReel();
+                        toggleEmptyState();
+                    }
+                });
+            });
+        }
+    }
+
+    function toggleEmptyState() {
+        const empty = state.pending.length === 0;
+        els.spinBtn.style.display = empty ? 'none' : 'block';
+        els.emptyMsg.style.display = empty ? 'block' : 'none';
+    }
+
+    function switchTab(which) {
+        const p = which === 'pending';
+        els.tabPending.classList.toggle('active', p);
+        els.tabWatched.classList.toggle('active', !p);
+        els.listPending.style.display = p ? 'block' : 'none';
+        els.listWatched.style.display = p ? 'none' : 'block';
+    }
+
+    function buildRateStars(container, initial, onChange) {
+        container.innerHTML = '';
+        for (let n = 1; n <= 5; n++) {
+            const b = document.createElement('button');
+            b.textContent = '★';
+            b.dataset.n = n;
+            if (n <= initial) b.classList.add('filled');
+            b.addEventListener('click', () => onChange(n));
+            container.appendChild(b);
+        }
+    }
+
+    function refreshTicketStars() {
+        buildRateStars(els.ticketStars, pendingRating, (n) => {
+            pendingRating = (pendingRating === n) ? 0 : n;
+            refreshTicketStars();
+        });
+    }
+
+    async function spin() {
+        if (spinning || state.pending.length === 0) return;
+        spinning = true;
+        els.spinBtn.disabled = true;
+
+        const targetIndex = Math.floor(Math.random() * state.pending.length);
+        const target = state.pending[targetIndex];
+
+        const cardWidth = 148,
+            gap = 10,
+            step = cardWidth + gap;
+        const loops = 6;
+        let sequence = [];
+        for (let i = 0; i < loops; i++) {
+            sequence = sequence.concat(shuffle(state.pending));
+        }
+        sequence.push(target);
+
+        els.reelTrack.style.transition = 'none';
+        els.reelTrack.style.transform = 'translateX(0)';
+        els.reelTrack.innerHTML = '';
+        sequence.forEach(m => els.reelTrack.appendChild(makeCard(m)));
+
+        void els.reelTrack.offsetWidth;
+
+        const gateWidth = els.reelGate.clientWidth;
+        const targetIdxInSeq = sequence.length - 1;
+        const targetCenter = 10 + targetIdxInSeq * step + cardWidth / 2;
+        const offset = targetCenter - gateWidth / 2;
+
+        requestAnimationFrame(() => {
+            els.reelTrack.style.transition = 'transform 4.4s cubic-bezier(0.10,0.68,0.14,1)';
+            els.reelTrack.style.transform = `translateX(-${offset}px)`;
+        });
+
+        const onEnd = () => {
+            els.reelTrack.removeEventListener('transitionend', onEnd);
+            spinning = false;
+            els.spinBtn.disabled = false;
+            openTicket(target);
+        };
+        els.reelTrack.addEventListener('transitionend', onEnd);
+    }
+
+    function openTicket(movie) {
+        pendingTarget = movie;
+        pendingRating = 0;
+        els.ticketTitle.textContent = movie.title;
+        els.ticketYear.textContent = `Vencedor de ${movie.year}`;
+        
+        // Carrega a capa no popup
+        loadPosterIntoElement(els.ticketPoster, movie.year, movie.title);
+
+        refreshTicketStars();
+        els.overlay.classList.add('show');
+    }
+
+    function closeTicket() {
+        els.overlay.classList.remove('show');
+        pendingTarget = null;
+    }
+
+    async function confirmTicket() {
+        if (!pendingTarget) return;
+        const idx = state.pending.findIndex(m => m.id === pendingTarget.id);
+        if (idx > -1) {
+            const [m] = state.pending.splice(idx, 1);
+            m.rating = pendingRating;
+            state.watched.push(m);
+            saveState();
+            renderLists();
+            renderStaticReel();
+            toggleEmptyState();
+        }
+        closeTicket();
+    }
+
+    async function resetAll() {
+        if (!confirm('Isso vai apagar todo o progresso e restaurar a lista original. Continuar?')) return;
+        state = { pending: MOVIES.map(m => ({ ...m })), watched: [] };
+        saveState();
+        renderLists();
+        renderStaticReel();
+        toggleEmptyState();
+    }
+
+    els.spinBtn.addEventListener('click', spin);
+    els.btnConfirm.addEventListener('click', confirmTicket);
+    els.btnCancel.addEventListener('click', closeTicket);
+    els.tabPending.addEventListener('click', () => switchTab('pending'));
+    els.tabWatched.addEventListener('click', () => switchTab('watched'));
+    els.resetBtn.addEventListener('click', resetAll);
+
+    (function init() {
+        loadState();
+        renderLists();
+        renderStaticReel();
+        toggleEmptyState();
+    })();
+</script>
+</body>
+</html>

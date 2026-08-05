@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Roleta dos Oscars · Capas Completas</title>
+    <title>Roleta dos Oscars · Personalizada</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
@@ -203,6 +203,74 @@
             color: #eecf7c;
             margin: 10px 0 20px;
         }
+
+        /* Formulário de adicionar filme */
+        .add-form {
+            max-width: 520px;
+            margin: 0 auto 16px;
+            background: var(--bg-card, #1a2332);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+        .add-form h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 16px;
+            color: #eecf7c;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .add-form .form-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .add-form .form-row input,
+        .add-form .form-row select {
+            flex: 1;
+            min-width: 100px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            color: #f6ead0;
+            font-family: 'Barlow', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .add-form .form-row input:focus,
+        .add-form .form-row select:focus {
+            border-color: #d4af37;
+        }
+        .add-form .form-row input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+        .add-form .form-row select option {
+            background: #1a2332;
+            color: #f6ead0;
+        }
+        .add-form .btn-add {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #eecf7c, #d4af37);
+            color: #120709;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .add-form .btn-add:hover { transform: scale(1.02); }
+        .add-form .btn-add:active { transform: scale(0.97); }
+
         .tabs {
             display: flex;
             gap: 8px;
@@ -392,6 +460,19 @@
             transition: color .2s;
         }
         .reset-link:hover { color: rgba(246,234,208,.7); }
+
+        @media (max-width: 480px) {
+            .add-form .form-row input,
+            .add-form .form-row select {
+                min-width: 80px;
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            .add-form .btn-add {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -415,7 +496,40 @@
 </div>
 
 <button class="spin-btn" id="spinBtn">🎬 Girar Roleta</button>
-<div class="empty-msg" id="emptyMsg" style="display:none;">Todos os vencedores já foram sorteados e assistidos! 🍿🏆</div>
+<div class="empty-msg" id="emptyMsg" style="display:none;">🎉 Todos os filmes já foram assistidos!</div>
+
+<!-- FORMULÁRIO PARA ADICIONAR FILMES -->
+<div class="add-form" id="addForm">
+    <h3>➕ Adicionar filme</h3>
+    <div class="form-row">
+        <input type="text" id="inputTitle" placeholder="Título do filme" maxlength="50">
+        <input type="number" id="inputYear" placeholder="Ano" min="1900" max="2100">
+        <select id="inputCategory">
+            <option value="🏆 Melhor Filme">🏆 Melhor Filme</option>
+            <option value="🎬 Melhor Diretor">🎬 Melhor Diretor</option>
+            <option value="🎭 Melhor Ator">🎭 Melhor Ator</option>
+            <option value="👸 Melhor Atriz">👸 Melhor Atriz</option>
+            <option value="🌍 Melhor Filme Internacional">🌍 Melhor Filme Internacional</option>
+            <option value="🎨 Melhor Animação">🎨 Melhor Animação</option>
+            <option value="✍️ Melhor Roteiro Original">✍️ Melhor Roteiro Original</option>
+            <option value="📖 Melhor Roteiro Adaptado">📖 Melhor Roteiro Adaptado</option>
+            <option value="📷 Melhor Fotografia">📷 Melhor Fotografia</option>
+            <option value="🎵 Melhor Trilha Sonora">🎵 Melhor Trilha Sonora</option>
+            <option value="🎤 Melhor Canção Original">🎤 Melhor Canção Original</option>
+            <option value="🎬 Melhor Filme de Animação">🎬 Melhor Filme de Animação</option>
+            <option value="📽️ Melhor Documentário">📽️ Melhor Documentário</option>
+            <option value="🎞️ Melhor Curta-metragem">🎞️ Melhor Curta-metragem</option>
+            <option value="🎭 Melhor Ator Coadjuvante">🎭 Melhor Ator Coadjuvante</option>
+            <option value="👸 Melhor Atriz Coadjuvante">👸 Melhor Atriz Coadjuvante</option>
+            <option value="🎨 Melhor Design de Produção">🎨 Melhor Design de Produção</option>
+            <option value="🎬 Melhores Efeitos Visuais">🎬 Melhores Efeitos Visuais</option>
+            <option value="🎵 Melhor Trilha Sonora Original">🎵 Melhor Trilha Sonora Original</option>
+            <option value="🎤 Melhor Canção Original">🎤 Melhor Canção Original</option>
+            <option value="🏆 Melhor Filme (minha lista)">🏆 Melhor Filme (minha lista)</option>
+        </select>
+        <button class="btn-add" id="btnAdd">➕ Adicionar</button>
+    </div>
+</div>
 
 <div class="tabs">
     <button class="tab-btn active" id="tabPending">🎯 Lista</button>
@@ -449,14 +563,11 @@
     // CAPAS REAIS via TMDb API - SUA CHAVE INSERIDA!
     // ============================================================
 
-    // ⭐ SUA CHAVE API DO TMDB
     const TMDB_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlOGUyOWQ1ZDIxY2FhM2Y5NTBjM2JiODFhN2UxZWY0YyIsIm5iZiI6MTc4NTk2MTc0My40MTUsInN1YiI6IjZhNzM5ZDBmMWRlZTEwOGZmZTMzMzhlMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RHZaXP91LPz7u3vTgYFqJNy692xFgruDLljXL23qsas';
     const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w300';
 
-    // Cache de capas
     const posterCache = new Map();
 
-    // Mapeamento de títulos para busca na API
     const MOVIE_SEARCH = {
         '2025': 'Anora',
         '2024': 'Oppenheimer',
@@ -557,27 +668,17 @@
         '1929': 'Wings'
     };
 
-    // Função para buscar poster via TMDb
     async function fetchPosterUrl(year, title) {
         const cacheKey = `${year}-${title}`;
-        
-        if (posterCache.has(cacheKey)) {
-            return posterCache.get(cacheKey);
-        }
+        if (posterCache.has(cacheKey)) return posterCache.get(cacheKey);
 
         try {
             const searchTitle = MOVIE_SEARCH[year] || title;
             const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(searchTitle)}&year=${year}&language=pt-BR`;
-            
             const response = await fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${TMDB_ACCESS_TOKEN}`,
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Authorization': `Bearer ${TMDB_ACCESS_TOKEN}`, 'Content-Type': 'application/json' }
             });
-            
             const data = await response.json();
-            
             if (data.results && data.results.length > 0) {
                 const posterPath = data.results[0].poster_path;
                 if (posterPath) {
@@ -586,7 +687,6 @@
                     return posterUrl;
                 }
             }
-            
             return null;
         } catch (error) {
             console.warn(`Erro ao buscar capa para ${title} (${year}):`, error);
@@ -594,7 +694,6 @@
         }
     }
 
-    // Fallback com SVG
     function generateFallbackPoster(year, title) {
         const colors = [
             ['#1a1a2e', '#16213e', '#e94560'],
@@ -607,14 +706,10 @@
         const idx = (parseInt(year) + title.length) % colors.length;
         const [bg1, bg2, accent] = colors[idx];
         const shortTitle = title.length > 28 ? title.substring(0, 25) + '...' : title;
-        
         return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E
-            %3Cdefs%3E
-                %3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E
-                    %3Cstop offset='0%25' stop-color='${bg1}'/%3E
-                    %3Cstop offset='100%25' stop-color='${bg2}'/%3E
-                %3C/linearGradient%3E
-            %3C/defs%3E
+            %3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E
+                %3Cstop offset='0%25' stop-color='${bg1}'/%3E%3Cstop offset='100%25' stop-color='${bg2}'/%3E
+            %3C/linearGradient%3E%3C/defs%3E
             %3Crect width='300' height='450' fill='url(%23g)'/%3E
             %3Crect x='10' y='10' width='280' height='430' fill='none' stroke='${accent}' stroke-width='2' opacity='0.3' rx='8'/%3E
             %3Ctext x='50%25' y='40%25' font-family='Barlow Condensed, sans-serif' font-weight='700' font-size='60' fill='${accent}' text-anchor='middle' dominant-baseline='middle' opacity='0.8'%3E🏆%3C/text%3E
@@ -625,7 +720,6 @@
         %3C/svg%3E`;
     }
 
-    // Função para carregar capa em um elemento (mostra a capa inteira)
     function loadPosterIntoElement(element, year, title) {
         fetchPosterUrl(year, title).then(posterUrl => {
             if (posterUrl) {
@@ -653,10 +747,9 @@
     }
 
     // ============================================================
-    // LISTA DE FILMES COM CATEGORIAS
+    // LISTA DE FILMES INICIAL
     // ============================================================
-    const MOVIES = [
-        // Melhor Filme
+    const DEFAULT_MOVIES = [
         { year: "2025", title: "Anora", category: "🏆 Melhor Filme" },
         { year: "2024", title: "Oppenheimer", category: "🏆 Melhor Filme" },
         { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "🏆 Melhor Filme" },
@@ -669,70 +762,6 @@
         { year: "2016", title: "Spotlight: Segredos Revelados", category: "🏆 Melhor Filme" },
         { year: "2015", title: "Birdman", category: "🏆 Melhor Filme" },
         { year: "2014", title: "12 Anos de Escravidão", category: "🏆 Melhor Filme" },
-        
-        // Melhor Diretor
-        { year: "2024", title: "Oppenheimer", category: "🎬 Melhor Diretor" },
-        { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "🎬 Melhor Diretor" },
-        { year: "2020", title: "Parasita", category: "🎬 Melhor Diretor" },
-        { year: "2019", title: "1917", category: "🎬 Melhor Diretor" },
-        { year: "2018", title: "A Forma da Água", category: "🎬 Melhor Diretor" },
-        
-        // Melhor Ator
-        { year: "2024", title: "Oppenheimer", category: "🎭 Melhor Ator" },
-        { year: "2023", title: "Os Fabelmans", category: "🎭 Melhor Ator" },
-        { year: "2022", title: "King Richard", category: "🎭 Melhor Ator" },
-        { year: "2020", title: "Joker", category: "🎭 Melhor Ator" },
-        { year: "2019", title: "Bohemian Rhapsody", category: "🎭 Melhor Ator" },
-        
-        // Melhor Atriz
-        { year: "2024", title: "Poor Things", category: "👸 Melhor Atriz" },
-        { year: "2023", title: "Tár", category: "👸 Melhor Atriz" },
-        { year: "2022", title: "Ataque dos Cães", category: "👸 Melhor Atriz" },
-        { year: "2021", title: "Nomadland", category: "👸 Melhor Atriz" },
-        { year: "2020", title: "Judy", category: "👸 Melhor Atriz" },
-        
-        // Melhor Filme Internacional
-        { year: "2024", title: "Zona de Interesse", category: "🌍 Melhor Filme Internacional" },
-        { year: "2023", title: "Nada de Novo no Front", category: "🌍 Melhor Filme Internacional" },
-        { year: "2022", title: "Drive My Car", category: "🌍 Melhor Filme Internacional" },
-        { year: "2021", title: "Druk (Another Round)", category: "🌍 Melhor Filme Internacional" },
-        { year: "2020", title: "Parasita", category: "🌍 Melhor Filme Internacional" },
-        
-        // Melhor Animação
-        { year: "2024", title: "O Menino e a Garça", category: "🎨 Melhor Animação" },
-        { year: "2023", title: "Pinóquio de Guillermo del Toro", category: "🎨 Melhor Animação" },
-        { year: "2022", title: "Encanto", category: "🎨 Melhor Animação" },
-        { year: "2021", title: "Soul", category: "🎨 Melhor Animação" },
-        { year: "2020", title: "Toy Story 4", category: "🎨 Melhor Animação" },
-        
-        // Melhor Roteiro Original
-        { year: "2024", title: "Anatomy of a Fall", category: "✍️ Melhor Roteiro Original" },
-        { year: "2023", title: "Tudo em Todo Lugar ao Mesmo Tempo", category: "✍️ Melhor Roteiro Original" },
-        { year: "2022", title: "Belfast", category: "✍️ Melhor Roteiro Original" },
-        { year: "2021", title: "Promising Young Woman", category: "✍️ Melhor Roteiro Original" },
-        
-        // Melhor Roteiro Adaptado
-        { year: "2024", title: "American Fiction", category: "📖 Melhor Roteiro Adaptado" },
-        { year: "2023", title: "Women Talking", category: "📖 Melhor Roteiro Adaptado" },
-        { year: "2022", title: "Ataque dos Cães", category: "📖 Melhor Roteiro Adaptado" },
-        { year: "2021", title: "Nomadland", category: "📖 Melhor Roteiro Adaptado" },
-        
-        // Melhor Fotografia
-        { year: "2024", title: "Oppenheimer", category: "📷 Melhor Fotografia" },
-        { year: "2023", title: "All Quiet on the Western Front", category: "📷 Melhor Fotografia" },
-        { year: "2022", title: "Duna", category: "📷 Melhor Fotografia" },
-        
-        // Melhor Trilha Sonora
-        { year: "2024", title: "Oppenheimer", category: "🎵 Melhor Trilha Sonora" },
-        { year: "2023", title: "All Quiet on the Western Front", category: "🎵 Melhor Trilha Sonora" },
-        { year: "2022", title: "Duna", category: "🎵 Melhor Trilha Sonora" },
-        
-        // Melhor Canção Original
-        { year: "2024", title: "Barbie", category: "🎤 Melhor Canção Original" },
-        { year: "2023", title: "RRR", category: "🎤 Melhor Canção Original" },
-        { year: "2022", title: "No Time to Die", category: "🎤 Melhor Canção Original" },
-        
-        // Clássicos
         { year: "1998", title: "Titanic", category: "🏆 Melhor Filme" },
         { year: "1994", title: "A Lista de Schindler", category: "🏆 Melhor Filme" },
         { year: "1973", title: "O Poderoso Chefão", category: "🏆 Melhor Filme" },
@@ -744,7 +773,7 @@
     ];
 
     // Storage
-    const STORAGE_KEY = 'oscar-roulette-state-v4';
+    const STORAGE_KEY = 'oscar-roulette-personal';
     let state = null;
     let spinning = false;
     let pendingRating = 0;
@@ -769,6 +798,10 @@
         btnCancel: document.getElementById('btnCancel'),
         resetBtn: document.getElementById('resetBtn'),
         reelGate: document.getElementById('reelGate'),
+        inputTitle: document.getElementById('inputTitle'),
+        inputYear: document.getElementById('inputYear'),
+        inputCategory: document.getElementById('inputCategory'),
+        btnAdd: document.getElementById('btnAdd'),
     };
 
     function loadState() {
@@ -776,7 +809,7 @@
         if (saved) {
             state = JSON.parse(saved);
         } else {
-            state = { pending: MOVIES.map(m => ({ ...m })), watched: [] };
+            state = { pending: DEFAULT_MOVIES.map(m => ({ ...m, id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random() })), watched: [] };
             saveState();
         }
     }
@@ -794,16 +827,17 @@
         return a;
     }
 
+    function generateId() {
+        return crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random();
+    }
+
     function makeCard(movie) {
         const d = document.createElement('div');
         d.className = 'reel-card';
-        
         const bgDiv = document.createElement('div');
         bgDiv.className = 'cover-bg';
         d.appendChild(bgDiv);
-        
         loadPosterIntoElement(d, movie.year, movie.title);
-        
         d.innerHTML += `
             <div class="cover-overlay"></div>
             <div class="category-badge">${movie.category}</div>
@@ -831,7 +865,7 @@
         updateCounter();
         els.listPending.innerHTML = '';
         if (state.pending.length === 0) {
-            els.listPending.innerHTML = '<div class="empty-list">🎉 Nenhum filme pra assistir. Você viu tudo!</div>';
+            els.listPending.innerHTML = '<div class="empty-list">🎉 Nenhum filme pra assistir. Adicione mais ou veja os assistidos!</div>';
         } else {
             state.pending.slice().sort((a, b) => b.year - a.year).forEach(m => {
                 const row = document.createElement('div');
@@ -865,8 +899,7 @@
             });
             els.listWatched.querySelectorAll('.star-edit').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const id = btn.dataset.id,
-                        n = Number(btn.dataset.n);
+                    const id = btn.dataset.id, n = Number(btn.dataset.n);
                     const movie = state.watched.find(x => x.id === id);
                     if (movie) {
                         movie.rating = (movie.rating === n) ? 0 : n;
@@ -926,6 +959,55 @@
         });
     }
 
+    // ============================================================
+    // ADICIONAR FILME
+    // ============================================================
+    function addMovie() {
+        const title = els.inputTitle.value.trim();
+        const year = els.inputYear.value.trim();
+        const category = els.inputCategory.value;
+
+        if (!title) {
+            alert('Por favor, digite o título do filme.');
+            els.inputTitle.focus();
+            return;
+        }
+        if (!year || isNaN(year) || year < 1900 || year > 2100) {
+            alert('Por favor, digite um ano válido (1900-2100).');
+            els.inputYear.focus();
+            return;
+        }
+
+        const newMovie = {
+            id: generateId(),
+            year: year,
+            title: title,
+            category: category
+        };
+
+        state.pending.push(newMovie);
+        saveState();
+        renderLists();
+        renderStaticReel();
+        toggleEmptyState();
+
+        els.inputTitle.value = '';
+        els.inputYear.value = '';
+        els.inputTitle.focus();
+
+        // Feedback visual
+        const btn = els.btnAdd;
+        btn.textContent = '✅ Adicionado!';
+        btn.style.background = '#48c774';
+        setTimeout(() => {
+            btn.textContent = '➕ Adicionar';
+            btn.style.background = '';
+        }, 1500);
+    }
+
+    // ============================================================
+    // SPIN
+    // ============================================================
     async function spin() {
         if (spinning || state.pending.length === 0) return;
         spinning = true;
@@ -934,9 +1016,7 @@
         const targetIndex = Math.floor(Math.random() * state.pending.length);
         const target = state.pending[targetIndex];
 
-        const cardWidth = 148,
-            gap = 10,
-            step = cardWidth + gap;
+        const cardWidth = 148, gap = 10, step = cardWidth + gap;
         const loops = 6;
         let sequence = [];
         for (let i = 0; i < loops; i++) {
@@ -976,9 +1056,7 @@
         els.ticketTitle.textContent = movie.title;
         els.ticketYear.textContent = `🏆 Ano: ${movie.year}`;
         els.ticketCategory.textContent = movie.category;
-        
         loadPosterIntoElement(els.ticketPoster, movie.year, movie.title);
-
         refreshTicketStars();
         els.overlay.classList.add('show');
     }
@@ -1004,21 +1082,32 @@
     }
 
     async function resetAll() {
-        if (!confirm('Isso vai apagar todo o progresso e restaurar a lista original. Continuar?')) return;
-        state = { pending: MOVIES.map(m => ({ ...m })), watched: [] };
+        if (!confirm('⚠️ Isso vai apagar TODO o progresso e restaurar a lista original. Continuar?')) return;
+        state = { pending: DEFAULT_MOVIES.map(m => ({ ...m, id: generateId() })), watched: [] };
         saveState();
         renderLists();
         renderStaticReel();
         toggleEmptyState();
     }
 
+    // ============================================================
+    // EVENTOS
+    // ============================================================
     els.spinBtn.addEventListener('click', spin);
     els.btnConfirm.addEventListener('click', confirmTicket);
     els.btnCancel.addEventListener('click', closeTicket);
     els.tabPending.addEventListener('click', () => switchTab('pending'));
     els.tabWatched.addEventListener('click', () => switchTab('watched'));
     els.resetBtn.addEventListener('click', resetAll);
+    els.btnAdd.addEventListener('click', addMovie);
 
+    // Enter key no formulário
+    els.inputTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.inputYear.focus(); });
+    els.inputYear.addEventListener('keydown', (e) => { if (e.key === 'Enter') addMovie(); });
+
+    // ============================================================
+    // INIT
+    // ============================================================
     (function init() {
         loadState();
         renderLists();
